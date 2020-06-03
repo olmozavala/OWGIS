@@ -1,0 +1,226 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Sep 20, 2013, 6:01:26 PM
+    Author     : Olmo Zavala-Romero
+*/
+/*
+* Base configuration, mixings and global variables
+*/
+/* 
+    Created on : Sep 20, 2013, 8:27:12 PM
+    Author     : Olmo Zavala-Romero
+*/
+/*
+* Font variables
+*/
+/* 
+    Created on : May 27, 2014, 3:48:12 PM
+    Author     : harshulpandav
+*/
+/* 
+ * popup
+ * emailText
+ */
+/* 
+ * MapInstructions::toolTip
+ */
+/* _base::floatingWindow
+ * OL3::lat-long
+ * OptionalLayersMenu::lay-par
+ */
+/* 
+ * OptionalLayersMenu::lay_title
+ */
+/* 
+ * BaseLayers::mainMenu --for drop-downs
+ * Buttons::plus/minus
+ * GeneralStyles::title --for draggableWindows 
+ */
+/* 
+ * Palettes::inputSizePalettes --height
+ */
+/* 
+ * GeneralStyles::mapTitle
+ */
+/*
+* Font variables
+*/
+/* 
+    Created on : May 27, 2014, 3:49:32 PM
+    Author     : harshulpandav
+*/
+/* line 14, ../scss/Popup.scss */
+.ol-popup {
+  position: absolute;
+  background-color: #ECF2F8;
+  font-size: 11px;
+  -moz-box-shadow: black 2px 2px 3px;
+  -webkit-box-shadow: black 2px 2px 3px;
+  box-shadow: black 2px 2px 3px;
+  padding: 14px;
+  border-radius: 7px;
+  border: 1px solid #ECF2F8;
+  bottom: 12px;
+  left: -50px;
+  z-index: 1006;
+  text-align: left;
+  width: 200px;
+}
+
+/* line 29, ../scss/Popup.scss */
+.ol-popup:after, .ol-popup:before {
+  top: 100%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+}
+
+/* line 39, ../scss/Popup.scss */
+.ol-popup:after {
+  border-top-color: #ECF2F8;
+  border-width: 10px;
+  left: 48px;
+  margin-left: -10px;
+}
+
+/* line 46, ../scss/Popup.scss */
+.ol-popup:before {
+  border-top-color: #ECF2F8;
+  border-width: 11px;
+  left: 48px;
+  margin-left: -11px;
+}
+
+/* line 54, ../scss/Popup.scss */
+.ol-popup-closer {
+  text-decoration: none;
+  position: absolute;
+  top: 2px;
+  right: 8px;
+}
+
+/* line 60, ../scss/Popup.scss */
+/*.ol-popup-closer:after {
+  content: "x";
+}*/
+
+.modal-header {
+    display: flex;
+    -ms-flex-align: start;
+    align-items: flex-start;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    padding: 15px;
+    border-bottom: 1px solid #e9ecef;
+    border-top-left-radius: .3rem;
+    border-top-right-radius: .3rem;
+}
+
+.modal-header button.close {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+    color: #000;
+    text-shadow: 0 1px 0 #fff;
+    opacity: .5;
+}
+
+h5#modalLabelVertProf, h5#modalLabelTimeSeries {
+    margin-bottom: 0;
+    line-height: 1.5;
+    font-size: 2.25rem;
+    font-weight: 500;
+    line-height: 1.2;
+    color: inherit;
+}
+
+@media (max-width: 500px) and (max-height: 700px) {
+    .modal-dialog{
+        top: 0px;
+        position: fixed;
+        background-color: #ffffff;
+        z-index: 1050;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        border: none;
+    }
+    .modal-content {
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+        -webkit-box-shadow: none;
+    }
+    h5#modalLabelVertProf, h5#modalLabelTimeSeries {
+        font-size: 10px;
+    }
+    .modal-header { 
+            padding: 5px;
+        }
+}
+@media (max-width: 700px) and (max-height: 500px) {
+    .modal-dialog{
+        top: 0px;
+        position: fixed;
+        background-color: #ffffff;
+        z-index: 1050;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        border: none;
+    }
+    .modal-content {
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+        -webkit-box-shadow: none;
+    }
+    h5#modalLabelVertProf, h5#modalLabelTimeSeries {
+        font-size: 10px;
+    }
+    
+    .modal-header { 
+            padding: 5px;
+        }
+}
+
+
+@media screen and (orientation:portrait) {
+	/* portrait-specific styles */
+        #containerChartsTS{
+            width: 100%;
+            height: 100%;
+        }
+        #containerChartsVP{
+            width: 100%;
+            height: 100%;
+        }
+}
+/* landscape */
+@media screen and (orientation:landscape) {
+	/* landscape-specific styles */
+        #containerChartsTS{
+            width: 100%;
+            height: 100%;
+        }
+        #containerChartsVP{
+            width: 100%;
+            height: 100%;
+        }
+}
+
+
+.modal-header {
+    cursor: move;
+}
+
+.ui-loading .ui-loader {
+    display: none;
+}

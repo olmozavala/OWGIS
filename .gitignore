@@ -1,0 +1,12 @@
+*.swp
+.idea
+/nbproject/
+/nbproject/private/
+/build/
+/dist/
+/test/
+/web/test/
+/web/common/.sass-cache/
+build.xml
+/libraries/CopyLibs/
+META-INF
