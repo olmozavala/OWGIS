@@ -5,8 +5,8 @@
 					vectorLayer="true"> 
 		<layer Menu="lev1,statesdyn" name="demo:us_states" EN="US States" ES="Estados US"  jsonp="true"/>
 		<layer Menu="lev1,states" name="demo:us_states" featureInfo="demo:world_countries" EN="US States" ES="Estados US"/>
-		<layer Menu="count" name="demo:world_countries" EN="Countries" ES="Paises" zoom="1" center="-100,22"/>
-		<layer Menu="lev1,countries" name="demo:world_countries" EN="Countries" ES="Paises"/>
+<!--		<layer Menu="lev1,countries" name="demo:world_countries" EN="Countries w pan/zoom" ES="Paises"   center="-100,22" zoom="1"/>-->
+		<layer Menu="count" name="demo:world_countries" EN="Countries" ES="Paises" selected="true"/>
 	</OptionalLayers>
 
 </MenuConf>

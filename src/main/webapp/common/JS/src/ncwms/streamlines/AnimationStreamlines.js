@@ -16,7 +16,7 @@ var currentsDefColor = "rgba(255, 255, 255, .6)";
 var currAnimSpeed = 80;//Miliseconds to wait (80)
 var defLineWidth = 1.7;
 var defLineWidthCesium = 2.5;
-var currentsText = 'vectors';
+var currentsText = 'Loading ';
 // This is the amount of data requested for every 800 pixels
 //var imageRequestResolution = 650;
 var imageRequestResolution = 800;
@@ -542,7 +542,7 @@ function updateData(){
     loadedRequests = 0;
     
     //Reads the data
-    owgis.interf.loadingatmap(true,0,"Currents");
+    owgis.interf.loadingatmap(true,0,"Loading ");
     totalFiles = times.length;
     uData = new Array();
     vData = new Array();
