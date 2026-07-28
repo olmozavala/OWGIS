@@ -87,9 +87,8 @@ function updateMenusDisplayVisibility(status){
                 if(loadedFrames > 0){
                     updateControlDynamically('#animControls [class*=play]');
                     updateControlDynamically('#animControls [class*=step]');
-                }else{
-                    $('#stopAnimText').show("fade");
                 }
+                // Keep #stopAnimText hidden; only the stop button is shown.
                 //Show the 'loading' animation
                 owgis.interf.loadingatmap(true);
                 $('#hideCalendarButtonParent').hide("fade");//Hide the calendars
@@ -175,6 +174,9 @@ function animLastFrame(){ currentFrame = totalNumOfFrames - 1; }
  * @returns {undefined}
  */
 function animDecreaseFrame(){
+    if (!totalNumOfFrames || !imagesReady || imagesReady.indexOf(1) === -1) {
+        return;// Animation frames are not loaded yet
+    }
     do{
         if(currentFrame > 0){
             currentFrame--;
@@ -189,6 +191,9 @@ function animDecreaseFrame(){
  * @returns {undefined}
  */
 function animIncreaseFrame(){
+    if (!totalNumOfFrames || !imagesReady || imagesReady.indexOf(1) === -1) {
+        return;// Animation frames are not loaded yet
+    }
     do{
         if(currentFrame < (totalNumOfFrames - 1) ){
             currentFrame++;
@@ -339,31 +344,18 @@ function obtainSelectedDates(){
         totFramesDaily = _.isNaN(totFramesDaily)? 0:totFramesDaily;
 
         if(totalNumOfFrames > totFramesDaily){
-            // In this case we have more than one data per day
-            // We need to request the hours for each day
-
-            var daysStr = new Array();
-            daysStr = allFrames;
-            allFrames = new Array();
-
-            var currDate;
-            var reqTIME;
-
-            for(var i = 0; i < daysStr.length; i++){
-                currDate = new Date(daysStr[i]);//Get next day
-                reqTIME = owgis.utils.getDate("%Y-%m-%d",currDate,true);
-                owgis.layers.getTimesForDay(owgis.layers.getMainLayer(),reqTIME,allFrames);
+            // Multiple timesteps per day: expand hours from the selected range.
+            var rangeParts = ($('#timeSelect :selected').attr('timestring') || "").split("/");
+            var rangeStart = rangeParts[0] ? new Date(rangeParts[0]) : null;
+            var rangeEnd = rangeParts[1] ? new Date(rangeParts[1]) : null;
+            if (!rangeEnd || isNaN(rangeEnd.getTime())) {
+                rangeEnd = owgis.ncwms.calendars.getCurrentDate(false, owgis.constants.endcal, true);
             }
-            
-            
-            startdate_ = new Date(daysStr[0]);
-            currDate = new Date(daysStr[0]);//Get next day
-	    reqTIME = owgis.utils.getDate("%Y-%m-%d",currDate,true);
-            owgis.layers.getTimesForDay(owgis.layers.getMainLayer(),reqTIME,allFrames);
-            enddate_ =  owgis.ncwms.calendars.getCurrentDate(false, owgis.constants.endcal, true);
-            var allDates = [];
-            //console.log(currDate.toISOString(),currDate.toISOString().split("T")[1], enddate_.toISOString());
-            myList = [];
+            if (!rangeStart || isNaN(rangeStart.getTime())) {
+                rangeStart = owgis.ncwms.calendars.getCurrentDate(false, owgis.constants.startcal, true);
+            }
+
+            var myList = [];
             if( !mobile ){
                 $('#startTimeCalendar option').each(function() {
                     myList.push($(this).val());
@@ -371,15 +363,18 @@ function obtainSelectedDates(){
             } else {
                 myList = layerDetails.timeSteps;
             }
-            while( currDate <= enddate_){
-                if( _.contains(myList,currDate.toISOString().split("T")[1]) ){
-                    allDates.push( currDate.toISOString() ); 
+
+            var allDates = [];
+            var currDate = new Date(rangeStart.getTime());
+            // Walk in UTC hours so local timezone offsets do not skip axis times.
+            while( currDate.getTime() <= rangeEnd.getTime()){
+                if( _.contains(myList, currDate.toISOString().split("T")[1]) ){
+                    allDates.push( currDate.toISOString() );
                 }
-                currDate.setHours(currDate.getHours()+1); 
+                currDate.setUTCHours(currDate.getUTCHours() + 1);
             }
-            
             allFrames = allDates;
-            
+            totalNumOfFrames = allFrames.length;
         }
     }
 }

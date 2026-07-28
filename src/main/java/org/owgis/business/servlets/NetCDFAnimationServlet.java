@@ -30,6 +30,7 @@ import org.owgis.business.NetCDFRequestManager;
 import org.owgis.exceptions.XMLFilesException;
 import org.owgis.model.Layer;
 import java.io.PrintWriter;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -59,26 +60,55 @@ public class NetCDFAnimationServlet extends HttpServlet {
 		LayerMenuManagerSingleton layers = LayerMenuManagerSingleton.getInstance();
 		Layer layer = layers.getLayerByName(layerName);//Search current layer
 
-		//Retrieve all the times available on the first and last day of the
-		//selected range
-		int hour = 0;
-		// THis request fails when the starting hour of the file is not present. So we manually test from initial
-		// hours from 0 to 24. Sometimes it helps
 		JSONObject jsonStartDates = new JSONObject();
-		String firstPart = firstDay.split("T")[0];
-		String secondPart = firstDay.split("T")[1];
-		int length = secondPart.length();
-		String attemptedFirstDay = "";
-		while(hour < 24){
-		    try {
-				attemptedFirstDay = firstPart +"T"+ String.format("%02d", hour) + secondPart.substring(2, length);
-				jsonStartDates = new JSONObject(NetCDFRequestManager.getLayerTimeStepsForAnimation(layer, attemptedFirstDay, lastDay));
-			}catch (Exception e){
-				System.out.println("Failed to load dates for "+ layerName+ " attempt with hour: "+ hour + " start date: " + attemptedFirstDay);
+		try {
+			// ncWMS requires both start and end to be exact values on the time axis.
+			String resolvedStart = resolveAxisTimestamp(layer, firstDay, true);
+			String resolvedEnd = resolveAxisTimestamp(layer, lastDay, false);
+			String raw = NetCDFRequestManager.getLayerTimeStepsForAnimation(layer, resolvedStart, resolvedEnd);
+			JSONObject candidate = new JSONObject(raw);
+			if (candidate.has("timeStrings")) {
+				jsonStartDates = candidate;
+			} else {
+				System.out.println("No timeStrings for " + layerName
+						+ " start=" + resolvedStart + " end=" + resolvedEnd + " raw=" + raw);
 			}
-		    hour++;
+		} catch (Exception e) {
+			System.out.println("Failed to load animation dates for " + layerName + ": " + e.getMessage());
 		}
 		out.print(jsonStartDates.toString());
+	}
+
+	/**
+	 * Resolve a calendar date to an ISO-8601 timestamp that exists on the layer time axis.
+	 * Date-only values use the first/last timestep of that day from ncWMS {@code timesteps}.
+	 *
+	 * @param layer layer to query
+	 * @param date calendar value ({@code yyyy-MM-dd} or full ISO-8601)
+	 * @param useFirstTimestep true for range start (first timestep of day), false for end
+	 * @return ISO-8601 timestamp on the axis
+	 * @throws JSONException if the timestep metadata cannot be parsed
+	 * @throws IllegalArgumentException if no timesteps exist for the day
+	 */
+	private String resolveAxisTimestamp(Layer layer, String date, boolean useFirstTimestep)
+			throws JSONException {
+		if (date == null || date.trim().isEmpty()) {
+			throw new IllegalArgumentException("Missing animation date");
+		}
+		if (date.contains("T") && !date.endsWith("T00:00:00.000Z") && !date.endsWith("T23:59:59.000Z")) {
+			// Already a specific time from the calendar hour selectors.
+			return date;
+		}
+		String day = date.contains("T") ? date.split("T")[0] : date;
+		JSONObject stepsJson = new JSONObject(NetCDFRequestManager.getLayerTimeSteps(layer, day));
+		JSONArray steps = stepsJson.optJSONArray("timesteps");
+		if (steps == null || steps.length() == 0) {
+			throw new IllegalArgumentException("No timesteps for day " + day);
+		}
+		String timeOfDay = useFirstTimestep
+				? steps.getString(0)
+				: steps.getString(steps.length() - 1);
+		return day + "T" + timeOfDay;
 	}
 	/**
 	 * available for the user selection). 

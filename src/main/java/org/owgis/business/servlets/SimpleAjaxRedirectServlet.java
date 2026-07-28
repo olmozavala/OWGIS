@@ -111,58 +111,102 @@ public class SimpleAjaxRedirectServlet extends HttpServlet {
             return "Short description";
         }// </editor-fold>
 
+    /**
+     * Fetch the remote URL text used by browser AJAX proxies.
+     * Retries briefly on failure. When {@code localhost}/{@code 127.0.0.1} fails
+     * (common when Tomcat runs in Docker), retries via {@code host.docker.internal}.
+     *
+     * @param url absolute URL requested by the browser
+     * @return response body, or an error message if all attempts fail
+     */
     private String obtainRedirectText(String url) {
+        String result = tryObtainRedirectText(url);
+        if (result != null && !result.startsWith("Failed to call:")) {
+            return result;
+        }
+        String rewritten = rewriteLoopbackForDocker(url);
+        if (rewritten != null && !rewritten.equals(url)) {
+            System.out.println("Retrying simpleAjaxRedirect via " + rewritten);
+            result = tryObtainRedirectText(rewritten);
+        }
+        return result == null ? ("Failed to call: " + url) : result;
+    }
+
+    /**
+     * Rewrite loopback hosts so containerized Tomcat can reach services on the host.
+     *
+     * @param url original absolute URL
+     * @return rewritten URL, or the original string if no rewrite applies
+     */
+    private String rewriteLoopbackForDocker(String url) {
+        if (url == null) {
+            return null;
+        }
+        return url
+                .replace("://localhost:", "://host.docker.internal:")
+                .replace("://127.0.0.1:", "://host.docker.internal:");
+    }
+
+    /**
+     * Attempt to fetch {@code url} with short timeouts and a few retries.
+     *
+     * @param url absolute URL to fetch
+     * @return response body, or {@code Failed to call: ...} on exhaustion
+     */
+    private String tryObtainRedirectText(String url) {
         String result = "";
-        boolean finish = false; //boolean to check if the request is done. 
-        int numberOfRetries = 10; //This is the number of tries the class will try to make the HTML request
+        boolean finish = false;
+        int numberOfRetries = 3;
         int retry = 0;
+        int connectTimeoutMs = 3000;
+        int readTimeoutMs = 8000;
 
-        //while the server doesnt answer we keep trying until numberOfRetries
         while (!finish && retry < numberOfRetries) {
+            retry++;
             try {
-                URL owgis = new URL(url);//reques to server
-                try {
-                    owgis.openConnection(); //connect to server
-                } catch (MalformedURLException e) {
-                    System.out.println("Error on SimpleAjaxRedirectServlet" + e.getMessage());
-                }
-                //repeat until get correct data. 
-                retry++;
-                finish = true; 
-                result = "";
-                InputStreamReader input = new InputStreamReader(owgis.openStream());
-                BufferedReader in = new BufferedReader(input); 
-                String inputLine;
-               
-                while ((inputLine = in.readLine()) != null) {
-                       //In version 1.7.5 of the geoserver, we otain an error when we ask for data outside the the correspoinding layer
-                    //in this case we detect the execption type and we terminate. 
-                    if (inputLine.contains("Internal error occurred")) {
-                        result = "";
-                        break;
-                    }
-                    if (inputLine.contains("")
-                            || inputLine.contains("??")
-                            || inputLine.contains("`")
-                            || inputLine.contains("*")) {
-                        finish = false;//dont end if invalid character is present. 
-                        break;
-                    } else {
-						result += inputLine;//save input if no wierd characters appear. 
-                    }
+                URL owgis = new URL(url);
+                java.net.HttpURLConnection connection =
+                        (java.net.HttpURLConnection) owgis.openConnection();
+                connection.setConnectTimeout(connectTimeoutMs);
+                connection.setReadTimeout(readTimeoutMs);
+                connection.setRequestMethod("GET");
+
+                int status = connection.getResponseCode();
+                java.io.InputStream stream = status >= 400
+                        ? connection.getErrorStream()
+                        : connection.getInputStream();
+                if (stream == null) {
+                    finish = false;
+                    continue;
                 }
 
-                in.close();//close connection to server. 
-                input.close();
+                result = "";
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(stream))) {
+                    String inputLine;
+                    while ((inputLine = in.readLine()) != null) {
+                        if (inputLine.contains("Internal error occurred")) {
+                            result = "";
+                            break;
+                        }
+                        // Skip known garbage markers from older GeoServer responses.
+                        if (inputLine.contains("\u0003") || inputLine.contains("??")) {
+                            finish = false;
+                            break;
+                        }
+                        result += inputLine;
+                        finish = true;
+                    }
+                }
+                connection.disconnect();
             } catch (IOException ex) {
-                Logger.getLogger(RedirectServersServlet.class.getName()).log(Level.SEVERE, "Error MapViewer en obtainRedirectText" + ex.getMessage(), ex);
+                Logger.getLogger(SimpleAjaxRedirectServlet.class.getName())
+                        .log(Level.SEVERE, "Error in obtainRedirectText: " + ex.getMessage(), ex);
                 finish = false;
             }
         }
-        if (retry == numberOfRetries) {//if max number of tryies return empty string. 
+        if (!finish) {
             result = "Failed to call: " + url;
         }
-
         return result;
     }
 }

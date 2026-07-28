@@ -1,0 +1,13 @@
+services:
+  owgis:
+    build: .
+    image: owgis:local
+    ports:
+      - "8080:8080"
+    # Reach host-published ncWMS2 (localhost:8088) for GetMetadata from inside the container.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    # Optional: live-edit layers/config without rebuilding the image.
+    # volumes:
+    #   - ./src/main/webapp/layers:/usr/local/tomcat/webapps/OWGIS/layers
+    #   - ./src/main/webapp/WEB-INF/conf:/usr/local/tomcat/webapps/OWGIS/WEB-INF/conf

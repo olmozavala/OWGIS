@@ -21,7 +21,26 @@ var urlPaletteImg;//this variable is used to get the first original url
 function updateMinMaxFromJson(minMaxTxt){
 	owgis.interf.loadingatmap(false);
 
-    var jsonMinMax = eval("("+minMaxTxt+")");
+	if (!minMaxTxt || minMaxTxt.indexOf("Failed to call:") === 0) {
+		console.error("Auto color range failed:", minMaxTxt);
+		alert("Could not compute auto color range. Check that ncWMS is reachable from the server.");
+		return;
+	}
+
+	var jsonMinMax;
+	try {
+		jsonMinMax = (typeof minMaxTxt === "string") ? JSON.parse(minMaxTxt) : minMaxTxt;
+	} catch (e) {
+		console.error("Invalid min/max response:", minMaxTxt, e);
+		alert("Could not parse auto color range response.");
+		return;
+	}
+	if (jsonMinMax.min === undefined || jsonMinMax.max === undefined) {
+		console.error("Missing min/max in response:", jsonMinMax);
+		alert("Auto color range response did not include min/max.");
+		return;
+	}
+
     $('#minPal').val(parseFloat(jsonMinMax["min"]).toPrecision(4)); 
     $('#maxPal').val(parseFloat(jsonMinMax["max"]).toPrecision(4));
     UpdatePalette(mappalette);

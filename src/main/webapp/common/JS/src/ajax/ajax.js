@@ -30,7 +30,16 @@ owgis.ajax.crossorigin = function(url, callback){
 
 	$.ajax({ 
 		url: hostUrl
-		}).done(callback);
+		}).done(function(responseText){
+			if (typeof callback === "function") {
+				callback(responseText);
+			}
+		}).fail(function(jqXHR, textStatus){
+			console.error("simpleAjaxRedirect failed:", textStatus, url);
+			if (typeof callback === "function") {
+				callback("Failed to call: " + url);
+			}
+		});
 };
 
 /**
@@ -60,6 +69,7 @@ function dispAnimationAjax(startDate, endDate, layerName, req, cal ) {
             url3 += '&endDate=' + endDate;
             asynchronous5.complete = asyncFillAnimationSelect;
             asynchronous5.call(url3);
+            break;
         case "getTimeSteps":
             url3 += '&day=' + startDate;
             //console.log(url3);
@@ -72,6 +82,7 @@ function dispAnimationAjax(startDate, endDate, layerName, req, cal ) {
 					break;
 			}
 			asynchronous5.call(url3);
+            break;
     }
 
     finishedLoading = false;
@@ -249,10 +260,9 @@ function asyncFillAnimationSelect(responseText) {
 			// If we have more than one day, then we copy the days from the 'daily' option
 			if( animOpts.timeStrings.length > 1){
 				fullStr = animOpts.timeStrings[1].timeString;//Force daily options
-			}else{//If not, it means we are only looking at one day
-				var tempStr = animOpts.timeStrings[0].timeString;//Force daily options
-				fullStr = tempStr.substring(0,tempStr.lastIndexOf("/"));
 			}
+			// For a single-day range keep the full start/end string so hourly
+			// frames can be expanded when the animation starts.
 			$('#timeSelect').append( $('<option>', {'totFrames': totNum, 
 				'forTimeSeries' : animOpts.timeStrings[0].timeString,
 				'timeString' : fullStr, 'key' : key} ).text(title));// Add option into dates range select

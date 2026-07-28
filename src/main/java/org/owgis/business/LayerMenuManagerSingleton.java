@@ -161,7 +161,7 @@ public class LayerMenuManagerSingleton {
                 
             } catch (XMLLayerException ex) {
                 layerExceptions.add(ex.getMessage());
-                break;//Try the next layer
+                continue;// Try the next layer
             }
             //If we make it this far, then the layer has been added succesfully (or it should)
             switch (layerType.toLowerCase()) {// Change the attributes that differ from layeres

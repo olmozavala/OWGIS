@@ -123,7 +123,14 @@ public class OpenLayersManager {
 		}
 		String result = "";//Esta variable contiene toda la configuracion de OpenLayers
 
-		result += this.agregaURLparaTraerDatos(idsBaseLayers[0]);
+		// Without a selected main layer, still emit a no-op click handler so OSM-only demos work.
+		if (idsBaseLayers.length > 0) {
+			result += this.agregaURLparaTraerDatos(idsBaseLayers[0]);
+		} else {
+			result += "\nfunction punctualData(evt) {\n"
+					+ "\t $('#popup').hide();\n"
+					+ "}\n";
+		}
 		//result += this.agregaURLparaTraerDatos();
 		result += "\nfunction addLayers(){\n";
 		result += this.createInitFunction(idsBaseLayers, extraLayers, backgroundLayer) + "\n";//Esta funcion crea la configuracion central de OpenLayers
@@ -418,31 +425,47 @@ public class OpenLayersManager {
 	 * @param actualLayer int Is the number of the current layer
 	 * @param kind google map
 	 */
+	/**
+	 * Creates a Google XYZ tile background (unofficial tile endpoint; may break without notice).
+	 *
+	 * @param currentConf current OpenLayers JS configuration
+	 * @param actualLayer layer index used for the JS variable name
+	 * @param kind {@code earth} for satellite, otherwise roads
+	 * @return configuration with the Google layer appended
+	 */
 	private String addGoogle(String currentConf, int actualLayer, String kind){
 		String layerGoogle = "\tlayer"+actualLayer+" = new ol.layer.Tile({\n "+
-				" \t\t source: new ol.source.TileImage({\n";
+				" \t\t source: new ol.source.XYZ({\n";
 		if(kind.equals("earth")) {
-			layerGoogle += " \t\t\t url: 'http://mt1.google.com/vt/lyrs=s&hl=pl&&x={x}&y={y}&z={z}',\n";
+			layerGoogle += " \t\t\t url: 'https://mt1.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}',\n";
 		} else {
-			layerGoogle += " \t\t\t url: 'http://mt1.google.com/vt/lyrs=m@113&hl=en&&x={x}&y={y}&z={z}',\n";
+			layerGoogle += " \t\t\t url: 'https://mt1.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}',\n";
 		}
-		layerGoogle += " \t\t\t wrapX: true})\n \t\t});\n" +
+		layerGoogle += " \t\t\t crossOrigin: 'anonymous',\n"+
+				" \t\t\t wrapX: true})\n \t\t});\n" +
 				"\tmap.addLayer(layer" + actualLayer + ");\n";
 		currentConf += layerGoogle;
 		return currentConf;
 	}
 
 	/**
-	 * Creates an BingMap layer
-	 * @param currentConf String Is the current configuration of OpenLayers
-	 * @param actualLayer int Is the number of the current layer
-	 * @param style kind of bing map
+	 * Creates a Bing Maps background layer.
+	 *
+	 * @param currentConf current OpenLayers JS configuration
+	 * @param actualLayer layer index used for the JS variable name
+	 * @param style Bing imagery set ({@code Road}, {@code Aerial}, {@code AerialWithLabels})
+	 * @return configuration with the Bing layer appended
 	 */
 	private String addBingLayer(String currentConf, int actualLayer,String style){
+		String bingKey = OpenLayerMapConfig.getInstance().getProperty("bingMapsKey");
+		if (bingKey == null || bingKey.trim().isEmpty()) {
+			System.out.println("Bing background requested but bingMapsKey is empty; falling back to OSM.");
+			return addOpenStreetMapLayer(currentConf, actualLayer);
+		}
 		currentConf += "\tlayer"+actualLayer+" =  new ol.layer.Tile({\n "+
 				" \t\t preload: Infinity,	\n"+
 				" \t\t source: new ol.source.BingMaps({\n"+
-				" \t\t\t key: 'yt4dgwztJFpmE5DetITs~rTgRmqOu_XWb0NQ590a9Qg~AtYZD4RML_s3-mV5HebwkaHKJynVyAZOvCDWGzEdWWDMllPirXHQOAGxi1_YVVRv',\n"+ //" \t\t\t key: 'Ak-dzM4wZjSqTlzveKz5u0d4IQ4bRzVI309GxmkgSVr1ewS6iPSrOvOKhA-CJlm3',\n"+
+				" \t\t\t key: '"+bingKey.trim()+"',\n"+
 				" \t\t\t imagerySet: '"+style+"'})\n \t\t});\n";
 
 		currentConf += "\tmap.addLayer(layer" + actualLayer + ");\n";
@@ -465,8 +488,14 @@ public class OpenLayersManager {
 
 		switch (backgroundLayer){
 			case "wms":
-				actualLayer = layersManager.getBackgroundLayers().get(0);
-				layersScript += addWMS(layersScript, layerCount, actualLayer);
+				if (layersManager.getBackgroundLayers() == null
+						|| layersManager.getBackgroundLayers().isEmpty()) {
+					System.out.println("No BackgroundLayers in XML; falling back to OSM.");
+					layersScript += addOpenStreetMapLayer(layersScript, layerCount);
+				} else {
+					actualLayer = layersManager.getBackgroundLayers().get(0);
+					layersScript += addWMS(layersScript, layerCount, actualLayer);
+				}
 				layerCount++;
 				break;
 			case "osm": //Add OpenStreetMap as the background layer

@@ -274,10 +274,18 @@ public class MapViewerServlet extends HttpServlet {
 			request.setAttribute("layerTitle", layerTitle);
 			request.setAttribute("titleSize", layerTitle.length());
 			request.setAttribute("totalLayers", opManager.getTotalVisibleLayers());
-			request.setAttribute("_id_first_main_layer", (opManager.getBackgroundLayers()).size());//Index of the  main layer (how many background layers we have)
+			// Index of the first main (data) layer in the OL layer list.
+			// XML BackgroundLayers only apply for backgroundLayer=wms; OSM/Bing/Google
+			// still insert one synthetic background layer at index 0 in JS.
+			int firstMainLayerIndex;
+			if ("wms".equalsIgnoreCase(backgroundLayer)) {
+				firstMainLayerIndex = opManager.getBackgroundLayers().size();
+			} else {
+				firstMainLayerIndex = 1;
+			}
+			request.setAttribute("_id_first_main_layer", firstMainLayerIndex);
 
-
-			request.setAttribute("newSession", session.isNew());//Inidicates if is the first time the map was loaded
+			request.setAttribute("newSession", session.isNew());//Inidicates if the first time the map was loaded
 
 			request.setAttribute("paletteUrl", NetCDFRequestManager.getPaletteUrl(curr_main_layer, palette));
 

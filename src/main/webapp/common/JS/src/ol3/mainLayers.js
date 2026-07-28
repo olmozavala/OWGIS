@@ -21,7 +21,15 @@ owgis.layers.getMainLayer = function(){
  */
 owgis.layers.getTimesForDay = function(layer, time, allFrames){
 	var mainLayer = layer;
+	if (!mainLayer || !mainLayer.getSource) {
+		console.warn("getTimesForDay: main layer is not ready");
+		return;
+	}
 	var mainSource = mainLayer.getSource();
+	if (!mainSource || typeof mainSource.getParams !== "function") {
+		console.warn("getTimesForDay: main layer source has no WMS params", mainSource);
+		return;
+	}
 	var mainParams = mainSource.getParams();
 	var layerName = mainParams.LAYERS;
 	
@@ -46,6 +54,9 @@ owgis.layers.getTimesForDay = function(layer, time, allFrames){
 			for(var i = 0; i < timesAsJson.timesteps.length; i++){
 				allFrames.push(time+"T"+timesAsJson.timesteps[i]);
 			}
+		},
+		error: function(xhr, status, err) {
+			console.warn("getTimesForDay failed:", status, err, url);
 		},
 		async:false
 	});

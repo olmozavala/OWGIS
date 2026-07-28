@@ -1,0 +1,11 @@
+.git
+.gitignore
+dist
+work
+target
+*.war
+arbol.html
+README.md
+license.txt
+buildTemplate.xml
+**/.DS_Store

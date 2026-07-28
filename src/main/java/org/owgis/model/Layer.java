@@ -295,9 +295,10 @@ public class Layer {
 				layerDetails.accumulate("bbox", this.getBbox().toString());
 			} else {
 				this.layerDetails = new JSONObject(layerDetailsStr);
-				if ((this.minColor == -1) && (this.maxColor == -1)) {
-					this.minColor = (double)((JSONArray) layerDetails.get("scaleRange")).get(0);
-					this.maxColor = (double)((JSONArray) layerDetails.get("scaleRange")).get(1);
+				if ((this.minColor == -1) && (this.maxColor == -1) && layerDetails.has("scaleRange")) {
+					JSONArray scaleRange = layerDetails.getJSONArray("scaleRange");
+					this.minColor = toDouble(scaleRange.get(0));
+					this.maxColor = toDouble(scaleRange.get(1));
 				}
 			}
 
@@ -716,6 +717,21 @@ public class Layer {
 	public void setLocalAddress(String localAddress) {
 		this.localAddress = localAddress;
 	}
-	
-		
+
+	/**
+	 * Coerce a JSON numeric value to {@code double} (org.json may return Integer or Double).
+	 *
+	 * @param value value from a JSONArray/JSONObject
+	 * @return numeric value as double, or {@code -1} when not a number
+	 */
+	private static double toDouble(Object value) {
+		if (value instanceof Number) {
+			return ((Number) value).doubleValue();
+		}
+		if (value != null) {
+			return Double.parseDouble(value.toString());
+		}
+		return -1;
+	}
 }
+
