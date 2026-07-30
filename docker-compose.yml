@@ -8,6 +8,8 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     # Optional: live-edit layers/config without rebuilding the image.
+    # Do not enable these unless OWGIS/ is already exploded — mounting them at
+    # first start creates empty dirs and blocks full WAR extraction (404).
     # volumes:
     #   - ./src/main/webapp/layers:/usr/local/tomcat/webapps/OWGIS/layers
     #   - ./src/main/webapp/WEB-INF/conf:/usr/local/tomcat/webapps/OWGIS/WEB-INF/conf

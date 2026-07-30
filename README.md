@@ -1,33 +1,50 @@
-OWGIS 2
-=====
+# OWGIS
 
-For more info please visit [owgis.org](http://owgis.org)!
+WebGIS for scientific maps served by WMS / [ncWMS](https://reading-escience-centre.github.io/ncwms/).
 
-# What is OWGIS?
+This repository contains **two generations** of the same product:
 
-OWGIS is a Java web application that creates WebGIS sites by automatically writing HTML and JavaScript code.
+| | **OWGIS 2** (Java) | **OWGIS 3** (TypeScript) |
+|---|---|---|
+| Location | Repository root | [`owgis3/`](owgis3/) |
+| Stack | Maven → Tomcat 9 WAR | Vite + OpenLayers + optional Cesium |
+| Config | `layers/*.xml` + properties | XML/JSON site config in the Builder |
+| Run | Docker Compose `:8080` | `npm run dev:all` `:5173` + proxy `:8091` |
+| Docs | This file | [`owgis3/README.md`](owgis3/README.md) |
 
-We built OWGIS because we wanted an easy way to publish scientific maps on the web. OWGIS provides self-contained WebGIS sites that can be easily customized. OWGIS can publish any type of georeferenced data served by a WMS server like [Geoserver](http://geoserver.org) or [ncWMS](https://reading-escience-centre.github.io/ncwms/). The latter uses an extension of the WMS standard to serve 3D or 4D data stored as [NetCDF](http://www.unidata.ucar.edu/software/netcdf/) files.
+More background: [owgis.org](http://owgis.org).
 
-Each WebGIS site is configured by:
+---
 
-- Java properties: `src/main/webapp/WEB-INF/conf/MapViewConfig.properties`
-- Layer XML files: `src/main/webapp/layers/*.xml`
+## Choose a path
 
-For detailed configuration docs see the tutorials at [owgis.org](http://owgis.org).
+### A) OWGIS 3 — recommended for new work
 
-# Quick start (Docker + local ncWMS2)
+Java-free builder + static viewer. Same ncWMS/WMS data model as OWGIS 2.
 
-This is the recommended way to run this template locally.
+```bash
+cd owgis3
+npm install
+npm run dev:all
+```
 
-## Prerequisites
+- Builder: <http://localhost:5173/>
+- Viewer: <http://localhost:5173/viewer.html>
+- Mobile: <http://localhost:5173/viewer.html?mobile=true>
+
+Full details: **[`owgis3/README.md`](owgis3/README.md)**.
+
+### B) OWGIS 2 — Docker + local ncWMS2
+
+Classic Java/Tomcat template. Use this to compare parity with OWGIS 3 or to keep an existing Tomcat deployment.
+
+#### Prerequisites
 
 - Docker and Docker Compose
-- A running ncWMS2 instance with sample data (ExampleNcWMS)
+- A running ncWMS2 with sample data (e.g. [ExampleNcWMS](https://github.com/) / local compose on `:8088`)
+- Optional: GeoServer on `:8085` for vector overlays (countries / coastlines / cities)
 
-## 1. Start local ncWMS2
-
-From the ExampleNcWMS project (adjust the path if yours differs):
+#### 1. Start ncWMS2
 
 ```bash
 cd /path/to/ExampleNcWMS
@@ -36,12 +53,12 @@ docker compose up --build -d
 
 Confirm:
 
-- Godiva / ncWMS UI: <http://localhost:8088/ncWMS2/>
-- WMS endpoint: <http://localhost:8088/ncWMS2/wms>
+- UI: <http://localhost:8088/ncWMS2/>
+- WMS: <http://localhost:8088/ncWMS2/wms>
 
-For streamlines/currents in OWGIS, datasets that provide vector components must allow downloads in ncWMS config (`downloadable="true"`), because OWGIS requests `application/prs.coverage+json`.
+For current streamlines, ncWMS datasets that provide U/V must allow downloads (`downloadable="true"`), because OWGIS requests `application/prs.coverage+json`.
 
-## 2. Start OWGIS
+#### 2. Start OWGIS 2
 
 ```bash
 cd /path/to/OWGIS
@@ -50,65 +67,49 @@ docker compose up --build -d
 
 Open: <http://localhost:8080/OWGIS/mapviewer>
 
-Stop:
-
 ```bash
-docker compose down
+docker compose down          # stop
+docker compose up --build -d # rebuild after Java/config/layer changes
 ```
 
-Rebuild after Java/config/layer changes:
+#### What you should see (OWGIS 2)
 
-```bash
-docker compose up --build -d
-```
+- Basemaps: OpenStreetMap, Google Earth, Google Roads
+- Main layers: **Local ncWMS2** (GoM HYCOM + FVCOM) and **Demo** (MapServer continents)
+- Optional GeoServer vectors when configured in layer XML and GeoServer is up
 
-## What you should see
+#### Docker networking
 
-- Default background: OpenStreetMap (Google Earth / Google Roads also available)
-- Default main layer: **GoM Water Temperature** from local ncWMS2
-- Layer menus: **Local ncWMS2** (FVCOM + GoM HYCOM) and **Demo** (public MapServer continents as a normal layer)
+| Who | URL |
+|-----|-----|
+| Browser tiles | `http://localhost:8088/ncWMS2/wms` (`server` in layer XML) |
+| Tomcat inside Docker (GetMetadata, Auto range, animations) | `http://host.docker.internal:8088/ncWMS2/wms` (`localAddress`) |
 
-## Architecture notes (Docker)
+`docker-compose.yml` sets `extra_hosts: host.docker.internal:host-gateway` so the container can reach ncWMS on the host.
 
-| Who | URL used |
-|-----|----------|
-| Browser tile / map requests | `http://localhost:8088/ncWMS2/wms` (`server` in layer XML) |
-| Tomcat inside Docker (GetMetadata, Auto range proxy, animations) | `http://host.docker.internal:8088/ncWMS2/wms` (`localAddress` + redirect rewrite) |
+Optional volume mounts for live layer/config edits are commented in `docker-compose.yml`. **Do not enable them on first start** unless the WAR is already exploded under `webapps/OWGIS/` — mounting empty host dirs blocks WAR extraction (404).
 
-`docker-compose.yml` adds `extra_hosts: host.docker.internal:host-gateway` so the OWGIS container can reach ncWMS on the host.
+---
 
-# Project layout (relevant bits)
+## Repository layout
 
 ```text
-Dockerfile / docker-compose.yml     Maven build → Tomcat 9 WAR
-src/main/webapp/layers/
-  0_Local_ncWMS2.xml                Local ncWMS2 demo layers
-  1_Demo_MapServer.xml              Public MapServer sample (main layer, not basemap)
-  0_Background_Layer.xml            Optional WMS basemap config (not shown in picker by default)
-src/main/webapp/layers_archive/     Original UNAM / live-demo layer XMLs
-src/main/webapp/WEB-INF/conf/
-  MapViewConfig.properties          Zoom, backgrounds, language, etc.
+Dockerfile / docker-compose.yml     OWGIS 2: Maven build → Tomcat 9
+src/main/webapp/layers/             OWGIS 2 layer XML
+src/main/webapp/WEB-INF/conf/       OWGIS 2 MapViewConfig.properties
+owgis3/                             OWGIS 3 Vite app (builder + viewer + proxy)
+  README.md                         OWGIS 3 docs
+  examples/                         Sample MenuConf XML (mirrors local ncWMS2)
+  public/config/site.json           Default viewer site config
 ```
 
-# Fixes included in this revive
+---
 
-These changes make the Maven/Tomcat 9 + local ncWMS2 stack usable again:
-
-1. **Docker packaging** – multi-stage Maven build, Tomcat 9, Java 8 compile target, `javax.servlet-api` provided.
-2. **Dead remote servers** – old UNAM layer XMLs moved to `layers_archive/`; active layers point at local ncWMS2 + public MapServer demo.
-3. **ncWMS hang protection** – HTTP connect/read timeouts in `NetCDFRequestManager`.
-4. **Numeric parsing** – `Layer.setLayerDetails` accepts Double/Integer scale values safely.
-5. **Layer indexing** – first main-layer index is `1` for OSM/Google backgrounds (not WMS-only).
-6. **Animations** – `getAnimTimes` resolves exact ncWMS axis timestamps; JS keeps full day ranges and expands hourly frames; missing `break`s in AJAX switch fixed; next/prev frame guards when images are not loaded.
-7. **Auto color range** – `simpleAjaxRedirect` retries `localhost` via `host.docker.internal`; safer JSON parsing (no `eval`).
-8. **Background picker** – WMS removed from basemap dropdown (MapServer continents stays as a Demo main layer). Bing options omitted until a valid `bingMapsKey` is set.
-9. **UI polish** – empty optional menu no longer throws; stop-animation text visibility fixed earlier in the revive.
-
-# Configuration tips
+## OWGIS 2 configuration tips
 
 ### Background maps
 
-In `MapViewConfig.properties`:
+In `src/main/webapp/WEB-INF/conf/MapViewConfig.properties`:
 
 ```properties
 backgroundLayer=osm
@@ -116,68 +117,19 @@ availableBackgroundLayers=osm;google;googler
 availableBackgroundNames=Open Street Map;Google Earth;Google Roads
 ```
 
-To re-enable Bing after obtaining a key:
-
-```properties
-bingMapsKey=YOUR_KEY_HERE
-availableBackgroundLayers=osm;google;googler;bingr;binga;bingh
-```
+Bing needs a valid `bingMapsKey` before adding `bingr` / `binga` / `bingh` to the list.
 
 ### Layers
 
-Edit XML under `src/main/webapp/layers/`, then rebuild the container. For live XML tweaks without rebuild, uncomment the volume mounts in `docker-compose.yml`.
+Edit XML under `src/main/webapp/layers/`, then `docker compose up --build -d`.
 
-### Optional: Ant / Netbeans
+### Legacy Ant / NetBeans
 
-Legacy Ant and Netbeans workflows remain below for historical setups. Prefer Docker for this repository.
+Prefer Docker. Historical Ant/NetBeans steps remain for older trees; clone URLs and paths may differ from this Maven layout.
 
-## Ant
+---
 
-Step 1. Clone the repository:
-
-```bash
-git clone https://github.com/olmozavala/OWGIS_V2.git OWGISV2Template
-```
-
-Step 2. Edit `buildTemplate.xml` to match your paths, mainly the Tomcat folder.
-
-Step 3. Build your war file:
-
-```bash
-ant -f buildTemplate.xml dist
-```
-
-Step 4. Deploy:
-
-```bash
-cp OWGISV2Template.war /usr/local/tomcat/webapps
-```
-
-Test at <http://localhost:8080/OWGISV2Template/mapviewer>
-
-## Netbeans
-
-Step 1. Clone the repository:
-
-```bash
-git clone https://github.com/olmozavala/OWGIS_V2.git OWGISV2Template
-```
-
-Step 2. Create new project in Netbeans
-
-- Delete `buildTemplate.xml`
-- File → New Project → Java Web → Web Application with Existing Sources
-- Point Location at the project root
-- Select Tomcat (or similar)
-- Web Pages → `web`, WEB-INF → `web/WEB-INF`, Sources → `src/java` (adjust if using the Maven `src/main/...` layout)
-
-Step 3. Project Properties → Run → Relative URL → `/mapviewer`
-
-## Mobile interface
-
-The mobile UI is selected from the User-Agent (or `?mobile=true`). For the older Titanium Android wrapper see [OWGIS_Mob](https://github.com/harshulpandav/OWGIS_Mob).
-
-# Authors
+## Authors
 
 **Olmo Zavala** — <https://github.com/olmozavala> — <https://olmozavala.com>
 
@@ -189,6 +141,6 @@ The mobile UI is selected from the User-Agent (or `?mobile=true`). For the older
 
 **Pablo Camacho** — <https://github.com/Pablocg0>
 
-# License
+## License
 
-OWGIS is licensed under the MIT Open Source license. See `license.txt` in this repository.
+MIT — see `license.txt`.

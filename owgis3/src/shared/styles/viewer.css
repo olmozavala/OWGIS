@@ -1,0 +1,1469 @@
+/**
+ * OWGIS3 viewer chrome — visual tokens and layout mirrored from OWGIS 2.
+ * Builder styles stay in app.css; these rules apply under .viewer-page.
+ */
+
+.viewer-page {
+  --ow-font: #ecf2f8;
+  --ow-back: #000000;
+  --ow-btn: #555555;
+  --ow-btn-hover: #3c3c3c;
+  --ow-btn-active: #4d4d4d;
+  --ow-btn-used: #1a7979;
+  --ow-shadow: #80ccdc;
+  --ow-shadow-hover: #dcc380;
+  --ow-trans: rgba(255, 255, 255, 0.2);
+  --ow-dropdown: #909090;
+  --ow-dropdown-hover: #777777;
+  --ow-opt-title: #80ccdc;
+  --ow-warning: #ec451f;
+  --ow-elev: #f9ffcb;
+  --ow-elev-sel: #bba364;
+  --ow-radius: 7px;
+  --ow-pad: 5px;
+  --ow-stack: Tahoma, Verdana, Arial, sans-serif;
+
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  font-family: var(--ow-stack);
+  font-size: 13px;
+  color: var(--ow-font);
+  background: var(--ow-back);
+}
+
+.viewer-page html,
+.viewer-page body,
+body.viewer-page {
+  height: 100%;
+  margin: 0;
+  background: #000;
+}
+
+.viewer-shell {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #000;
+  display: block;
+}
+
+/* ---- Map fills viewport ---- */
+.viewer-page #map {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  z-index: 1;
+  background: #000;
+  cursor: crosshair;
+}
+
+.viewer-page .ol-zoom {
+  top: 68px;
+  left: 8px;
+}
+
+.viewer-page .ol-zoom button {
+  width: 28px;
+  height: 28px;
+  font-size: 18px;
+  line-height: 1;
+  font-weight: 700;
+  margin: 1px;
+  border-radius: 4px;
+}
+
+.viewer-page .ol-scale-line {
+  bottom: 40px;
+  left: 40%;
+  z-index: 1010;
+  background: rgba(0, 0, 0, 0.55);
+  border-radius: 999px;
+  padding: 3px 10px;
+  border: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+}
+
+/* Classic OL3 / OWGIS2 scale: light label + light bar on the dark pill */
+.viewer-page .ol-scale-line-inner {
+  border: 1px solid #eeeeee;
+  border-top: none;
+  color: #eeeeee;
+  font-size: 11px;
+  font-family: Tahoma, Verdana, Arial, sans-serif;
+  text-align: center;
+  margin: 1px;
+  will-change: contents, width;
+  transition: all 0.25s;
+}
+
+.viewer-page .ol-attribution {
+  bottom: 50px;
+  right: 8px;
+  background: transparent;
+}
+
+/* ---- Text halos (OWGIS 2 defShadow / invShadow) ---- */
+.defShadow {
+  color: var(--ow-font);
+  text-shadow:
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000,
+    0 0 4px #000;
+}
+
+.invShadow {
+  color: #000;
+  text-shadow:
+    -1px -1px 0 #ecf2f8,
+    1px -1px 0 #ecf2f8,
+    -1px 1px 0 #ecf2f8,
+    1px 1px 0 #ecf2f8;
+}
+
+/* ---- Top frosted toolbar (OWGIS 2 TopMenu) ---- */
+.topMenu {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1008;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  padding: 10px 12px;
+  min-height: 48px;
+  box-sizing: border-box;
+  /* Light frost so the map shows through (more transparent than before) */
+  background-image: url("/images/transBack.png");
+  background-color: rgba(236, 242, 248, 0.14);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.topMenu .brand-link {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 6px;
+  position: relative;
+  z-index: 1;
+}
+
+.topMenu .brand-link img {
+  height: 20px;
+  display: block;
+}
+
+.topMenu .tool-cluster {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  /* True horizontal center of the toolbar (logo left, status/builder right) */
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+}
+
+.topMenu .spacer {
+  flex: 1;
+}
+
+.topMenu .status-line,
+.topMenu > a.icon-btn {
+  position: relative;
+  z-index: 1;
+}
+
+.buttonStyle,
+.buttonLook {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background-color: var(--ow-btn);
+  color: var(--ow-font);
+  border: none;
+  border-radius: var(--ow-radius);
+  box-shadow: var(--ow-shadow) 2px 2px 6px;
+  padding: 5px 10px;
+  margin: 2px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  text-decoration: none;
+  line-height: 1.2;
+}
+
+.buttonStyle:hover,
+.buttonLook:hover {
+  background-color: var(--ow-btn-hover);
+  box-shadow: var(--ow-shadow-hover) 2px 2px 12px;
+  color: var(--ow-font);
+}
+
+.buttonStyle:active,
+.buttonLook:active {
+  background-color: var(--ow-btn-active);
+}
+
+.buttonStyle.beenUsed,
+.buttonLook.beenUsed {
+  background-color: var(--ow-btn-used);
+  box-shadow: var(--ow-shadow) 2px 2px 6px;
+}
+
+.buttonStyle select,
+.buttonLook select {
+  background: transparent;
+  color: var(--ow-font);
+  border: none;
+  font: inherit;
+  max-width: 140px;
+  cursor: pointer;
+}
+
+.buttonStyle select option,
+.buttonLook select option {
+  color: #000;
+  background: #fff;
+}
+
+/* Basemap thumbnail picker (OWGIS 2 bootstrap-select style) */
+.basemap-picker {
+  position: relative;
+  padding: 3px 6px;
+  z-index: 1;
+}
+
+.basemap-picker.open {
+  z-index: 1200;
+}
+
+/* Keep the image dropdown above floating panels (Main Layers, etc.) */
+.topMenu:has(.basemap-picker.open) {
+  z-index: 2000;
+}
+
+.basemap-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  background: transparent;
+  border: none;
+  color: inherit;
+  padding: 0;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  font: inherit;
+}
+
+.basemap-toggle img#basemap-thumb {
+  display: block;
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  border-radius: 0;
+  flex-shrink: 0;
+}
+
+.basemap-option img {
+  display: block;
+  width: 44px;
+  height: 33px;
+  object-fit: cover;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.basemap-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 1300;
+  margin: 0;
+  padding: 4px 0;
+  list-style: none;
+  min-width: 180px;
+  background: rgba(40, 40, 40, 0.97);
+  border: 1px solid #888;
+  border-radius: var(--ow-radius);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+}
+
+.basemap-menu.hidden {
+  display: none !important;
+}
+
+.basemap-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  cursor: pointer;
+  color: #ecf2f8;
+  white-space: nowrap;
+}
+
+.basemap-option-label {
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.basemap-option:hover,
+.basemap-option.selected {
+  background: rgba(128, 204, 220, 0.35);
+}
+
+.topMenu .status-line {
+  font-size: 12px;
+  color: #062c28;
+  text-shadow: 0 0 2px #fff;
+  max-width: 280px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---- Map title ---- */
+.mapTitle {
+  position: absolute;
+  /* Below the frosted topMenu; leave room for title ascent + text-shadow */
+  top: 62px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 20px;
+  pointer-events: none;
+  z-index: 1000;
+  margin: 0;
+  padding: 0 12px;
+  box-sizing: border-box;
+}
+
+.mapTitleSub {
+  display: block;
+  font-size: 14px;
+  margin-top: 2px;
+  font-weight: normal;
+}
+
+#div-palette-horbar {
+  position: absolute;
+  left: 1%;
+  bottom: 10px;
+  z-index: 1008;
+  pointer-events: none;
+  padding: 0;
+  background: transparent;
+  line-height: 0;
+}
+
+#div-palette-horbar.hidden {
+  display: none;
+}
+
+#canvas-palette-horbar {
+  display: block;
+  border-radius: 999px;
+  background-color: #000;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+}
+
+.buttonLook button {
+  background: transparent;
+  border: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  padding: 0 4px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.topMenu .icon-btn {
+  width: 34px;
+  height: 32px;
+  padding: 0;
+  justify-content: center;
+}
+
+.topMenu .tool-icon {
+  width: 16px;
+  height: 16px;
+  display: block;
+  flex-shrink: 0;
+}
+
+.topMenu .tool-icon-sm {
+  width: 14px;
+  height: 14px;
+}
+
+.topMenu .opacity-control {
+  gap: 2px;
+  padding: 4px 8px;
+}
+
+.topMenu .opacity-icon {
+  display: inline-flex;
+  align-items: center;
+  opacity: 0.95;
+}
+
+.topMenu .icon-btn.hidden,
+.topMenu .tool-cluster > li.hidden {
+  display: none;
+}
+
+/* ---- Floating windows ---- */
+#draggable-container {
+  position: absolute;
+  top: 50px;
+  left: 0;
+  width: 100%;
+  height: calc(100% - 50px);
+  z-index: 1008;
+  pointer-events: none;
+}
+
+#draggable-container > * {
+  pointer-events: auto;
+}
+
+#panels {
+  display: contents;
+}
+
+.draggableWindow,
+.transDraggableWindow {
+  position: absolute;
+  z-index: 1008;
+  border: none;
+  padding: var(--ow-pad);
+  cursor: move;
+  font-size: 13px;
+  opacity: 0.9;
+  border-radius: var(--ow-radius);
+  /* Match calendars: black copy on a light body (chrome stays translucent). */
+  color: #111;
+  background-color: var(--ow-trans);
+  backdrop-filter: blur(2px);
+  box-sizing: border-box;
+  min-width: 160px;
+  max-width: min(360px, 92vw);
+}
+
+.draggableWindow.minimized,
+.transDraggableWindow.minimized,
+.draggableWindow.hidden,
+.transDraggableWindow.hidden {
+  display: none !important;
+}
+
+.win-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 6px;
+  font-size: 15px;
+  font-weight: bold;
+  text-align: center;
+  justify-content: center;
+  cursor: move;
+  user-select: none;
+}
+
+.win-title .title-text {
+  flex: 1;
+}
+
+.win-chrome {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.win-chrome button {
+  background: #eee;
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  width: 22px;
+  height: 20px;
+  padding: 0;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: none;
+}
+
+.win-chrome button:hover {
+  background: #fff;
+}
+
+.win-body {
+  background: none;
+  color: #111;
+  border-radius: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.win-body label {
+  display: block;
+  margin: 4px 0;
+  font-size: 12px;
+  color: #111;
+}
+
+.win-body select,
+.win-body input[type="number"],
+.win-body input[type="text"],
+.win-body input:not([type]) {
+  width: 100%;
+  background: var(--ow-dropdown);
+  color: #000;
+  border: 1px solid #9ea2a5;
+  border-radius: 4px;
+  padding: 4px 6px;
+  font: inherit;
+  box-sizing: border-box;
+}
+
+.win-body select.mainMenu {
+  background: var(--ow-dropdown);
+  color: #000;
+  margin-bottom: 4px;
+}
+
+.win-body .row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 6px 0;
+}
+
+.win-body .buttonStyle {
+  margin: 2px 0;
+}
+
+.win-body .muted {
+  color: #444;
+  font-size: 11px;
+  margin: 4px 0;
+}
+
+.draggableWindow .win-title,
+.transDraggableWindow .win-title {
+  color: #000;
+  text-shadow:
+    -1px -1px 0 #ecf2f8,
+    1px -1px 0 #ecf2f8,
+    -1px 1px 0 #ecf2f8,
+    1px 1px 0 #ecf2f8;
+}
+
+/* Default placements (OWGIS 2-ish) */
+#mainMenuParent {
+  top: 60px;
+  left: 50px;
+  width: 200px;
+}
+
+#optionalMenuParent {
+  top: 60px;
+  left: 270px;
+  width: auto;
+  min-width: 260px;
+  max-width: min(420px, 94vw);
+}
+
+#optionalMenuParent .opt-lay-list-root {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+}
+
+#optionalMenuParent .opt-lay-title {
+  list-style: none;
+  margin: 6px 0 2px;
+  padding: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #2a7a8c;
+  cursor: pointer;
+  user-select: none;
+}
+
+#optionalMenuParent .opt-lay-title:hover {
+  color: #1f6371;
+}
+
+#optionalMenuParent .opt-lay-title.collapsed::before {
+  content: "▸ ";
+}
+
+#optionalMenuParent .opt-lay-title:not(.collapsed)::before {
+  content: "▾ ";
+}
+
+#optionalMenuParent .opt-lay-list {
+  list-style: none;
+  margin: 0 0 4px;
+  padding: 0 0 0 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+#optionalMenuParent .opt-lay-list.collapsed {
+  display: none;
+}
+
+#optionalMenuParent .opt-lay-list-flat {
+  padding-left: 0;
+}
+
+#optionalMenuParent .opt-lay-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  min-height: 26px;
+}
+
+#optionalMenuParent .opt-lay-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  flex: 0 1 auto;
+  min-width: 0;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+#optionalMenuParent .opt-lay-name {
+  white-space: nowrap;
+}
+
+#optionalMenuParent .opt-lay-opacity {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+
+#optionalMenuParent .opt-lay-opacity .buttonStyle {
+  min-width: 22px;
+  padding: 1px 5px;
+  line-height: 1.2;
+}
+
+#optionalMenuParent .opt-lay-op-val {
+  font-size: 11px;
+  min-width: 2.6em;
+  text-align: right;
+  color: #334;
+  font-variant-numeric: tabular-nums;
+}
+
+#CalendarsAndStopContainer {
+  top: 209px;
+  left: 50px;
+  width: fit-content;
+  min-width: min(380px, calc(100vw - 24px));
+  max-width: min(460px, calc(100vw - 24px));
+}
+
+.calendars-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 2px 0 4px;
+}
+
+.calendars-titles,
+.calendars-row,
+.calendars-hours {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  align-items: start;
+}
+
+.calendars-titles .title {
+  text-align: center;
+  font-weight: 600;
+  font-size: 13px;
+  color: #1a3a4a;
+}
+
+.calendars-hours .hour-wrap {
+  text-align: center;
+}
+
+#startTimeCalendar,
+#endTimeCalendar,
+#timeSelect {
+  margin-top: 2px;
+  width: 100%;
+  max-width: 160px;
+  color: #000;
+  background-color: #909090e6;
+  border: 2px solid #9ea2a5;
+  border-radius: 6px;
+  padding: 2px 4px;
+}
+
+.calendars-res {
+  text-align: center;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.calendars-res .radio-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin: 0 6px;
+  font-weight: normal;
+}
+
+.calendars-anim {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.calendars-anim #btn-disp-anim {
+  justify-self: center;
+}
+
+/* jQuery UI-ish datepicker (OWGIS 2 calendars) */
+.ui-datepicker {
+  width: 170px;
+  padding: 2px;
+  display: inline-block;
+  background: rgba(236, 242, 248, 0.92);
+  border: 1px solid #9ea2a5;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  font-size: 11px;
+  color: #222;
+}
+
+.ui-datepicker-header {
+  position: relative;
+  padding: 4px 0;
+  background: linear-gradient(#d5e0ea, #b8c8d6);
+  border-bottom: 1px solid #9ea2a5;
+  border-radius: 3px 3px 0 0;
+  text-align: center;
+  font-weight: 600;
+}
+
+.ui-datepicker-prev,
+.ui-datepicker-next {
+  position: absolute;
+  top: 2px;
+  width: 1.6em;
+  height: 1.6em;
+  line-height: 1.6em;
+  text-decoration: none;
+  color: #1a3a4a;
+  cursor: pointer;
+}
+
+.ui-datepicker-prev {
+  left: 4px;
+}
+
+.ui-datepicker-next {
+  right: 4px;
+}
+
+.ui-datepicker-title {
+  margin: 0 1.8em;
+  line-height: 1.6em;
+}
+
+.ui-datepicker-calendar {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0;
+}
+
+.ui-datepicker-calendar th {
+  padding: 2px;
+  text-align: center;
+  font-weight: 600;
+  color: #445;
+}
+
+.ui-datepicker-calendar td {
+  padding: 1px;
+  text-align: center;
+}
+
+.ui-datepicker-calendar td a {
+  display: block;
+  padding: 2px;
+  text-decoration: none;
+  color: #1a3a4a;
+  border: 1px solid transparent;
+  border-radius: 2px;
+}
+
+.ui-datepicker-calendar td a.ui-state-default:hover {
+  background: #c5d8e8;
+  border-color: #7a9bb5;
+}
+
+.ui-datepicker-calendar td.ui-datepicker-current-day a,
+.ui-datepicker-calendar td a.ui-state-active {
+  background: #1a7979;
+  color: #fff;
+  border-color: #146060;
+  font-weight: 700;
+}
+
+.ui-datepicker-calendar td.ui-datepicker-unselectable,
+.ui-datepicker-calendar td.ui-state-disabled {
+  opacity: 0.35;
+}
+
+.ui-datepicker-calendar td.ui-datepicker-unselectable a,
+.ui-datepicker-calendar td.ui-state-disabled a {
+  cursor: default;
+  color: #888;
+  pointer-events: none;
+}
+
+.ui-datepicker-other-month {
+  visibility: hidden;
+}
+
+#paletteWindowColorRange {
+  top: 245px;
+  left: 60%;
+  width: 220px;
+}
+
+.color-range-controls {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.color-range-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.color-range-label {
+  flex: 0 0 2.2em;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+#paletteWindowColorRange .inputSizePalettes {
+  width: 4.5em;
+  flex: 0 0 auto;
+  background: var(--ow-dropdown);
+  color: #000;
+  border: 1px solid #9ea2a5;
+  border-radius: 4px;
+  padding: 2px 4px;
+  font: inherit;
+  text-align: right;
+}
+
+#paletteWindowColorRange .color-range-step {
+  min-width: 22px;
+  padding: 1px 5px;
+  line-height: 1.2;
+}
+
+.color-range-actions {
+  justify-content: flex-start;
+  gap: 6px;
+}
+
+#zaxis_selector_parent {
+  top: 90px;
+  left: 40%;
+  width: 180px;
+}
+
+#animControls {
+  top: 40%;
+  left: 42%;
+  width: 260px;
+}
+
+#toolsPanel {
+  top: 120px;
+  right: 24px;
+  left: auto;
+  width: 240px;
+}
+
+#currentsControlsContainer {
+  top: 245px;
+  left: 40%;
+  width: 200px;
+}
+
+#currentsCanvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  /* Inside .ol-viewport, below .ol-overlaycontainer* so popups stay readable */
+  z-index: 1;
+  pointer-events: none;
+  display: none;
+}
+
+#currentsCanvas.active {
+  display: block;
+}
+
+.viewer-page .ol-overlaycontainer-stopevent,
+.viewer-page .ol-overlaycontainer {
+  z-index: 2;
+}
+
+#currentsControlsContainer input[type="range"] {
+  width: 100%;
+}
+
+#currentsControlsContainer input[type="color"] {
+  width: 100%;
+  height: 28px;
+  padding: 0;
+  border: none;
+  background: transparent;
+}
+
+.legend-row {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.legend-pick-btn {
+  display: block;
+  padding: 0;
+  margin: 0;
+  border: 1px solid #9ea2a5;
+  border-radius: 3px;
+  background: #000;
+  cursor: pointer;
+  line-height: 0;
+}
+
+.legend-pick-btn:hover,
+.legend-pick-btn:focus-visible {
+  outline: 2px solid var(--ow-shadow);
+  outline-offset: 1px;
+}
+
+.legend-row img,
+.legend-pick-btn img {
+  height: 120px;
+  width: 20px;
+  background: #000;
+  border-radius: 2px;
+  display: block;
+}
+
+/* ---- Optional palette picker (OWGIS 2 #palettes-div) ---- */
+#palettes-div {
+  max-width: min(420px, 96vw);
+}
+
+.palettes-picker-body {
+  padding-top: 4px;
+}
+
+.palettes-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 auto 8px;
+}
+
+.palettes-table td {
+  padding: 2px;
+  vertical-align: top;
+  text-align: center;
+}
+
+.opt-palette-btn {
+  display: inline-block;
+  padding: 2px;
+  margin: 0;
+  border: 2px solid transparent;
+  border-radius: 3px;
+  background: transparent;
+  cursor: pointer;
+  line-height: 0;
+}
+
+.opt-palette-btn:hover,
+.opt-palette-btn:focus-visible {
+  border-color: var(--ow-shadow);
+}
+
+.opt-palette-btn.selected {
+  border-color: #1a7979;
+  background: rgba(26, 121, 121, 0.12);
+}
+
+.optPaletteImg {
+  display: block;
+  width: 20px;
+  height: 120px;
+  border-radius: 1px;
+  box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.35);
+  background: #000;
+}
+
+.palettes-pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.palettes-pager .buttonStyle {
+  min-width: 36px;
+}
+
+.anim-body {
+  min-width: 280px;
+}
+
+.anim-range-label {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.anim-transport {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 6px 0 10px;
+}
+
+.anim-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid #9ea2a5;
+  border-radius: 4px;
+  background: #555;
+  color: #fff;
+  font-size: 13px;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.anim-icon-btn:hover {
+  background: #3c3c3c;
+}
+
+.anim-icon-btn.anim-play-btn {
+  background: #1a7979;
+}
+
+.anim-icon-btn.anim-play-btn:hover {
+  background: #155f5f;
+}
+
+.anim-icon-btn.anim-stop-btn {
+  background: #ec451f;
+}
+
+.anim-icon-btn.anim-stop-btn:hover {
+  background: #c73818;
+}
+
+.anim-icon-btn.is-disabled,
+.anim-icon-btn[href="#"] {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.anim-meta {
+  font-size: 12px;
+  color: #222;
+  line-height: 1.45;
+  margin-top: 4px;
+}
+
+.anim-meta-label {
+  font-weight: 700;
+}
+
+.anim-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+
+.anim-controls .warning {
+  background-color: var(--ow-warning);
+}
+
+/* ---- Lon/lat frosted readout ---- */
+.layersLonLat,
+.viewer-page .ol-mouse-position {
+  position: absolute !important;
+  bottom: 50px !important;
+  right: 5% !important;
+  left: auto !important;
+  top: auto !important;
+  z-index: 1008;
+  background-image: url("/images/transBack.png");
+  background-color: rgba(255, 255, 255, 0.35);
+  color: #000;
+  padding: 4px 10px;
+  border-radius: var(--ow-radius);
+  font-size: 12px;
+  pointer-events: none;
+}
+
+/* ---- Minimized dock ---- */
+#minimizedWindowsContainer {
+  position: absolute;
+  left: 0;
+  bottom: 3px;
+  width: 100%;
+  z-index: 1009;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px 8px;
+  pointer-events: none;
+}
+
+.minimizedWindow {
+  pointer-events: auto;
+  background: #000;
+  color: var(--ow-font);
+  opacity: 0.7;
+  border: none;
+  border-radius: var(--ow-radius);
+  padding: 4px 10px;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  box-shadow: var(--ow-shadow) 1px 1px 4px;
+}
+
+.minimizedWindow:hover {
+  opacity: 0.95;
+}
+
+.minimizedWindow.hidden {
+  display: none !important;
+}
+
+/* ---- Feature popup (OWGIS 2 ol-popup) ---- */
+.viewer-page .ol-popup {
+  position: absolute;
+  background-color: #ecf2f8;
+  color: #000;
+  font-size: 11px;
+  box-shadow: #000 2px 2px 3px;
+  padding: 14px;
+  border-radius: 7px;
+  border: 1px solid #9aa7b5;
+  z-index: 1006;
+  text-align: left;
+  /* Wide enough for "Time series plot: [Show]" on one line */
+  width: 280px;
+  min-width: 260px;
+  line-height: 1.55;
+  display: none;
+}
+
+.viewer-page .ol-popup:after,
+.viewer-page .ol-popup:before {
+  top: 100%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+}
+
+.viewer-page .ol-popup:after {
+  border-top-color: #ecf2f8;
+  border-width: 10px;
+  left: 50%;
+  margin-left: -10px;
+}
+
+.viewer-page .ol-popup:before {
+  border-top-color: #9aa7b5;
+  border-width: 11px;
+  left: 50%;
+  margin-left: -11px;
+}
+
+.viewer-page .ol-popup-closer {
+  text-decoration: none;
+  position: absolute;
+  top: 2px;
+  right: 8px;
+  color: #1a5f9e;
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 700;
+}
+
+.viewer-page .ol-popup-closer:hover {
+  color: #0d3a66;
+}
+
+.viewer-page #popup-content {
+  padding-right: 12px;
+}
+
+.viewer-page .popup-show-btn {
+  display: inline-block;
+  margin-left: 4px;
+  padding: 1px 8px;
+  font-size: 11px;
+  line-height: 1.4;
+  color: #222;
+  background: #fff;
+  border: 1px solid #bbb;
+  border-radius: 3px;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+.viewer-page .popup-show-btn:hover {
+  background: #f3f6f9;
+  border-color: #888;
+}
+
+.viewer-page .plot-modal {
+  position: absolute;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+}
+
+.viewer-page .plot-modal.hidden {
+  display: none !important;
+}
+
+.viewer-page .plot-modal-dialog {
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+  width: min(720px, 94vw);
+  max-height: 90vh;
+  overflow: auto;
+}
+
+.viewer-page .plot-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border-bottom: 1px solid #e9ecef;
+  cursor: default;
+}
+
+.viewer-page .plot-modal-header h5 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #222;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.viewer-page .plot-modal-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.viewer-page .plot-modal-download {
+  border: 1px solid #ccc;
+  background: #555;
+  color: #fff;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  line-height: 1.2;
+}
+
+.viewer-page .plot-modal-download:hover:not(:disabled) {
+  background: #3c3c3c;
+}
+
+.viewer-page .plot-modal-download:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.viewer-page .plot-modal-close {
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  cursor: pointer;
+  color: #444;
+  line-height: 1;
+}
+
+.viewer-page .plot-modal-body {
+  padding: 12px 14px 16px;
+  text-align: center;
+}
+
+.viewer-page .plot-modal-chart {
+  width: 100%;
+  height: min(420px, 60vh);
+  min-height: 280px;
+}
+
+.viewer-page .plot-modal-chart.hidden {
+  display: none !important;
+}
+
+.viewer-page .plot-modal-body img {
+  max-width: 100%;
+  height: auto;
+  display: inline-block;
+}
+
+.viewer-page .plot-modal-body img.hidden {
+  display: none !important;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ---- Narrow desktop / tablet (still floating windows) ---- */
+@media (max-width: 900px) {
+  .topMenu {
+    flex-wrap: wrap;
+    row-gap: 4px;
+    height: auto;
+    min-height: 42px;
+    padding: 4px 8px;
+  }
+
+  .topMenu .tool-cluster {
+    position: static;
+    left: auto;
+    transform: none;
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+
+  .tool-cluster {
+    flex-wrap: wrap;
+  }
+
+  .mapTitle {
+    top: 72px;
+    font-size: 15px;
+    max-width: calc(100vw - 48px);
+  }
+
+  #mainMenuParent {
+    left: 12px;
+    top: 88px;
+    max-width: calc(100vw - 24px);
+  }
+
+  #optionalMenuParent {
+    left: 12px;
+    top: auto;
+    bottom: 72px;
+    max-width: calc(100vw - 24px);
+  }
+
+  #CalendarsAndStopContainer {
+    left: 12px;
+    top: auto;
+    bottom: 12px;
+    min-width: 0;
+    width: calc(100vw - 24px);
+    max-width: calc(100vw - 24px);
+  }
+
+  .calendars-titles,
+  .calendars-row,
+  .calendars-hours {
+    gap: 6px;
+  }
+
+  #div-palette-horbar {
+    max-width: calc(100vw - 16px);
+  }
+
+  .ol-popup {
+    max-width: min(280px, calc(100vw - 32px));
+  }
+}
+
+@media (max-width: 560px) {
+  .calendars-titles,
+  .calendars-row,
+  .calendars-hours {
+    grid-template-columns: 1fr;
+  }
+
+  .calendars-anim {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,20 @@
+<MenuConf xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="schema.xsd">
+	<!-- Minimal local demo that does not depend on the old UNAM ncWMS/GeoServer hosts.
+	     Archived original layer XMLs are in ../layers_archive/ -->
+	<Menus>
+		<Menu ID="DEMO" EN="Demo" ES="Demo" HI_IN="Demo"/>
+		<Menu ID="MS" EN="MapServer sample" ES="Ejemplo MapServer"/>
+	</Menus>
+
+	<!-- Keep MapServer as a non-ncWMS fallback; GoM temperature is selected by default in Local_ncWMS2.xml -->
+	<MainLayers BBOX="-180,-90,180,90"
+				format="image/png"
+				server="https://demo.mapserver.org/cgi-bin/wms"
+				projection="EPSG:4326">
+		<layer Menu="DEMO,MS"
+			   EN="Continents (public MapServer demo)"
+			   ES="Continentes (demo publica MapServer)"
+			   name="continents"
+			   featureInfo="none"/>
+	</MainLayers>
+</MenuConf>

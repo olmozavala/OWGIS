@@ -1,0 +1,392 @@
+/**
+ * Mobile viewer chrome — OWGIS 2–style header + side sheets.
+ * Active when body has `.viewer-mobile` (see `src/viewer/mobile.ts`).
+ */
+
+.viewer-mobile .topMenu {
+  display: none !important;
+}
+
+.viewer-mobile .mapTitle {
+  /* Clear the mobile header (+ safe area) + a little breathing room */
+  top: calc(56px + env(safe-area-inset-top, 0px));
+  font-size: 14px;
+  max-width: 92vw;
+  pointer-events: none;
+}
+
+.viewer-mobile .ol-zoom {
+  top: calc(96px + env(safe-area-inset-top, 0px));
+  left: max(8px, env(safe-area-inset-left, 0px));
+}
+
+.viewer-mobile .ol-zoom button {
+  width: 36px;
+  height: 36px;
+  font-size: 22px;
+}
+
+.viewer-mobile .ol-scale-line {
+  bottom: calc(56px + env(safe-area-inset-bottom, 0px));
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.viewer-mobile .ol-mouse-position,
+.viewer-mobile .layersLonLat {
+  display: none;
+}
+
+.viewer-mobile #minimizedWindowsContainer {
+  display: none !important;
+}
+
+/* ---- Header: Tools | title | Layers ---- */
+.mob-header {
+  display: none;
+}
+
+.viewer-mobile .mob-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2100;
+  height: calc(44px + env(safe-area-inset-top, 0px));
+  padding: env(safe-area-inset-top, 0px) max(8px, env(safe-area-inset-right, 0px)) 0
+    max(8px, env(safe-area-inset-left, 0px));
+  box-sizing: border-box;
+  background: rgba(30, 40, 52, 0.92);
+  color: #ecf2f8;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.35);
+  font-family: Tahoma, Verdana, Arial, sans-serif;
+}
+
+.mob-header-btn {
+  flex: 0 0 auto;
+  min-width: 72px;
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #ecf2f8;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.mob-header-btn:active {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.mob-header-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0 4px;
+}
+
+/* ---- Backdrop ---- */
+.mob-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 2200;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.mob-backdrop.hidden {
+  display: none !important;
+}
+
+/* ---- Left tools sheet ---- */
+.mob-sheet {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 2300;
+  width: min(300px, 86vw);
+  background: rgba(236, 242, 248, 0.97);
+  color: #111;
+  box-shadow: 0 0 18px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(-105%);
+  transition: transform 0.22s ease;
+  box-sizing: border-box;
+}
+
+.mob-sheet-left {
+  left: 0;
+}
+
+.mob-sheet.open {
+  transform: translateX(0);
+}
+
+.mob-sheet-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  background: rgba(30, 40, 52, 0.92);
+  color: #ecf2f8;
+  flex: 0 0 auto;
+}
+
+.mob-sheet-head h2 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.mob-sheet-close {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.15);
+  color: #ecf2f8;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.mob-sheet-body {
+  flex: 1 1 auto;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 8px 10px 16px;
+}
+
+.mob-tool-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.mob-tool-list > li {
+  margin: 0 0 6px;
+}
+
+.mob-tool-block {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: #fff;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.mob-tool-label {
+  flex: 1 1 100%;
+  font-size: 12px;
+  font-weight: 600;
+  color: #333;
+}
+
+.mob-opacity-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mob-opacity-row button,
+.mob-tool-block .basemap-toggle {
+  width: 36px;
+  height: 36px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #f4f6f8;
+  color: #222;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mob-tool-link {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: left;
+  padding: 12px 12px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  background: #fff;
+  color: #111;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.mob-tool-link:active {
+  background: #e8eef4;
+}
+
+.mob-status-line {
+  margin: 10px 2px 0;
+  font-size: 12px;
+  color: #444;
+  min-height: 1.2em;
+}
+
+.viewer-mobile .mob-sheet .basemap-menu {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  top: 100%;
+  z-index: 5;
+  margin-top: 4px;
+}
+
+/* ---- Layers chrome (right) + stacked panels ---- */
+.mob-layers-chrome {
+  display: none;
+}
+
+.viewer-mobile.mob-layers-open .mob-layers-chrome {
+  display: flex;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 2302;
+  width: min(340px, 92vw);
+  flex-direction: column;
+  pointer-events: none;
+}
+
+.viewer-mobile.mob-layers-open .mob-layers-chrome .mob-sheet-head {
+  pointer-events: auto;
+}
+
+.viewer-mobile.mob-layers-open #draggable-container {
+  position: absolute;
+  top: 44px;
+  left: auto !important;
+  right: 0 !important;
+  bottom: 0;
+  z-index: 2301;
+  width: min(340px, 92vw);
+  height: auto !important;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  background: rgba(236, 242, 248, 0.97);
+  box-shadow: -2px 0 14px rgba(0, 0, 0, 0.25);
+  box-sizing: border-box;
+  pointer-events: auto;
+}
+
+.viewer-mobile.mob-layers-open #panels {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.viewer-mobile.mob-layers-open #mainMenuParent,
+.viewer-mobile.mob-layers-open #optionalMenuParent,
+.viewer-mobile.mob-layers-open #CalendarsAndStopContainer {
+  position: relative !important;
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: auto !important;
+  z-index: auto !important;
+  width: 100% !important;
+  max-width: none !important;
+  max-height: none;
+  overflow: visible;
+  cursor: default;
+  opacity: 1;
+  border-radius: 0;
+  margin: 0;
+  background: transparent;
+  backdrop-filter: none;
+  box-shadow: none;
+}
+
+.viewer-mobile.mob-layers-open #optionalMenuParent,
+.viewer-mobile.mob-layers-open #CalendarsAndStopContainer {
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.viewer-mobile.mob-layers-open #mainMenuParent .win-title,
+.viewer-mobile.mob-layers-open #optionalMenuParent .win-title,
+.viewer-mobile.mob-layers-open #CalendarsAndStopContainer .win-title,
+.viewer-mobile.mob-panel-open .draggableWindow .win-title,
+.viewer-mobile.mob-panel-open .transDraggableWindow .win-title {
+  cursor: default;
+}
+
+.viewer-mobile.mob-layers-open .calendars-row,
+.viewer-mobile.mob-layers-open .calendars-titles,
+.viewer-mobile.mob-layers-open .calendars-hours {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 8px;
+}
+
+.viewer-mobile.mob-layers-open .calendars-body {
+  overflow-x: hidden;
+}
+
+/* ---- Nested tool panels as full-height sheets ---- */
+.viewer-mobile.mob-panel-open #paletteWindowColorRange,
+.viewer-mobile.mob-panel-open #palettes-div,
+.viewer-mobile.mob-panel-open #zaxis_selector_parent,
+.viewer-mobile.mob-panel-open #animControls,
+.viewer-mobile.mob-panel-open #currentsControlsContainer,
+.viewer-mobile.mob-panel-open #toolsPanel {
+  position: absolute !important;
+  left: auto !important;
+  right: 0 !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  z-index: 2301 !important;
+  width: min(340px, 92vw) !important;
+  max-width: min(340px, 92vw) !important;
+  max-height: none;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  cursor: default;
+  opacity: 1;
+  border-radius: 0;
+  margin: 0;
+  background: rgba(236, 242, 248, 0.98);
+  backdrop-filter: none;
+  box-shadow: -2px 0 14px rgba(0, 0, 0, 0.25);
+}
+
+.viewer-mobile .win-min {
+  display: none !important;
+}
+
+.viewer-mobile #div-palette-horbar {
+  bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(92vw, 420px);
+  max-width: calc(100vw - 16px);
+}
+
+.viewer-mobile .plot-modal-dialog {
+  width: min(96vw, 640px);
+  max-height: 90vh;
+}

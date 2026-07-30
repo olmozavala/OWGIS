@@ -1,0 +1,106 @@
+<MenuConf xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="schema.xsd">
+	<!--
+	  Local ncWMS2 layers from ExampleNcWMS:
+	  /home/olmozavala/Dropbox/TutorialsByMe/ncWMS/ExampleNcWMS
+
+	  Browser tiles use localhost:8088.
+	  Tomcat (inside Docker) fetches GetMetadata via host.docker.internal.
+	-->
+	<Menus>
+		<Menu ID="NCWMS" EN="Local ncWMS2" ES="ncWMS2 local"/>
+		<Menu ID="FVCOM" EN="FVCOM sample" ES="Ejemplo FVCOM"/>
+		<Menu ID="GOM" EN="Gulf of Mexico HYCOM" ES="Golfo de Mexico HYCOM"/>
+		<Menu ID="BATHY" EN="Bathymetry" ES="Batimetria"/>
+		<Menu ID="ZETA" EN="Water Surface Elevation" ES="Elevacion de superficie"/>
+		<Menu ID="TEMP" EN="Water Temperature" ES="Temperatura del agua"/>
+		<Menu ID="SALT" EN="Salinity" ES="Salinidad"/>
+		<Menu ID="CURR" EN="Currents" ES="Corrientes"/>
+		<Menu ID="TEMPCURR" EN="Temperature + currents" ES="Temperatura + corrientes"/>
+		<Menu ID="VECTOR" EN="Vector overlays" ES="Capas vectoriales"/>
+		<Menu ID="COUNTRIES" EN="Countries" ES="Paises"/>
+		<Menu ID="COAST" EN="Coastline" ES="Costa"/>
+		<Menu ID="CITIES" EN="Major cities" ES="Ciudades principales"/>
+	</Menus>
+
+	<!-- Gulf of Mexico HYCOM first so it becomes the default selected path -->
+	<MainLayers BBOX="-98.01999997739438,18.100000840339106,-76.38002443666812,31.940000075188237"
+				format="image/png"
+				server="http://localhost:8088/ncWMS2/wms"
+				localAddress="http://host.docker.internal:8088/ncWMS2/wms"
+				ncWMStwo="true"
+				style="default-scalar"
+				palette="default">
+		<layer Menu="NCWMS,GOM,TEMP"
+			   EN="GoM Water Temperature"
+			   ES="Temperatura del agua GoM"
+			   name="gom/water_temp"
+			   palette="x-Sst"
+			   selected="true"/>
+		<layer Menu="NCWMS,GOM,ZETA"
+			   EN="GoM Surface Elevation"
+			   ES="Elevacion de superficie GoM"
+			   name="gom/surf_el"/>
+		<layer Menu="NCWMS,GOM,SALT"
+			   EN="GoM Salinity"
+			   ES="Salinidad GoM"
+			   name="gom/salinity"
+			   palette="seq-BuYl"/>
+		<layer Menu="NCWMS,GOM,CURR"
+			   EN="GoM Current speed"
+			   ES="Velocidad de corrientes GoM"
+			   name="gom/water_u:water_v-mag"
+			   style="default-scalar"
+			   palette="psu-plasma"
+			   defParticleSpeed=".9"
+			   overlaystreamlines="gom/water_u:gom/water_v"/>
+		<layer Menu="NCWMS,GOM,TEMPCURR"
+			   EN="GoM Temperature with current streamlines"
+			   ES="Temperatura GoM con corrientes"
+			   name="gom/water_temp"
+			   style="default-scalar"
+			   palette="x-Sst"
+			   defParticleSpeed=".9"
+			   overlaystreamlines="gom/water_u:gom/water_v"/>
+	</MainLayers>
+
+	<!-- FVCOM Northeast US sample -->
+	<MainLayers BBOX="-75.68433380126953,35.27653121948242,-56.850791931152344,46.14595031738281"
+				format="image/png"
+				server="http://localhost:8088/ncWMS2/wms"
+				localAddress="http://host.docker.internal:8088/ncWMS2/wms"
+				ncWMStwo="true"
+				style="default-scalar"
+				palette="default">
+		<layer Menu="NCWMS,FVCOM,BATHY"
+			   EN="FVCOM Bathymetry"
+			   ES="Batimetria FVCOM"
+			   name="fvcom/h"/>
+		<layer Menu="NCWMS,FVCOM,ZETA"
+			   EN="FVCOM Water Surface Elevation"
+			   ES="Elevacion de superficie FVCOM"
+			   name="fvcom/zeta"/>
+	</MainLayers>
+
+	<!-- Local GeoServer Natural Earth vectors (http://localhost:8085/geoserver) -->
+	<OptionalLayers BBOX="-180,-90,180,90"
+					format="image/png"
+					server="http://localhost:8085/geoserver/wms"
+					vectorLayer="true"
+					proj="EPSG:4326">
+		<layer Menu="VECTOR,COUNTRIES"
+			   EN="Countries"
+			   ES="Paises"
+			   name="ne:countries"
+			   style="ne:countries"/>
+		<layer Menu="VECTOR,COAST"
+			   EN="Coastline"
+			   ES="Costa"
+			   name="ne:coastlines"
+			   style="ne:coastline"/>
+		<layer Menu="VECTOR,CITIES"
+			   EN="Major cities"
+			   ES="Ciudades principales"
+			   name="ne:populated_places"
+			   style="ne:populated_places"/>
+	</OptionalLayers>
+</MenuConf>

@@ -1,0 +1,260 @@
+:root {
+  --bg: #0f1c24;
+  --panel: #17303c;
+  --panel-2: #1f3d4c;
+  --ink: #e8f1f5;
+  --muted: #9bb4c0;
+  --accent: #2bb0a6;
+  --accent-2: #f0a202;
+  --danger: #e4572e;
+  --border: rgba(232, 241, 245, 0.12);
+  --shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  --font: "IBM Plex Sans", "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  font-family: var(--font);
+  color: var(--ink);
+  background:
+    radial-gradient(1200px 600px at 10% -10%, #245468 0%, transparent 55%),
+    radial-gradient(900px 500px at 100% 0%, #1a3a2f 0%, transparent 50%),
+    var(--bg);
+}
+
+a {
+  color: var(--accent);
+}
+
+.topbar {
+  padding: 1.25rem 1.5rem 0.5rem;
+}
+
+.brand {
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.tagline {
+  margin: 0.25rem 0 0;
+  color: var(--muted);
+}
+
+.builder-layout {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 1rem;
+  padding: 1rem 1.5rem 2rem;
+}
+
+@media (max-width: 960px) {
+  .builder-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.panel {
+  background: linear-gradient(180deg, var(--panel), var(--panel-2));
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  padding: 1rem 1.1rem;
+}
+
+.panel h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.05rem;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+button,
+.button {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: #234858;
+  color: var(--ink);
+  border-radius: 8px;
+  padding: 0.45rem 0.75rem;
+  cursor: pointer;
+  font: inherit;
+}
+
+button.primary {
+  background: var(--accent);
+  color: #062c28;
+  border-color: transparent;
+  font-weight: 600;
+}
+
+button.danger {
+  background: transparent;
+  border-color: var(--danger);
+  color: #ffb4a2;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+textarea,
+input,
+select {
+  width: 100%;
+  background: #0c1820;
+  color: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.5rem 0.65rem;
+  font: inherit;
+}
+
+textarea {
+  min-height: 220px;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+}
+
+.layer-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 360px;
+  overflow: auto;
+}
+
+.layer-list li {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.35rem;
+  padding: 0.55rem 0.4rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.layer-list .meta {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.status {
+  color: var(--muted);
+  font-size: 0.9rem;
+  white-space: pre-wrap;
+}
+
+.status.error {
+  color: #ffb4a2;
+}
+
+.status.ok {
+  color: #8fe3b0;
+}
+
+/* Builder shell layout — do not apply on the map viewer page. */
+body:not(.viewer-page) .viewer-shell {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: 100vh;
+}
+
+.viewer-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.55rem 0.75rem;
+  background: rgba(15, 28, 36, 0.92);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(8px);
+}
+
+.viewer-toolbar label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.viewer-toolbar select,
+.viewer-toolbar input {
+  width: auto;
+  min-width: 7rem;
+}
+
+#map {
+  width: 100%;
+  height: 100%;
+  min-height: 320px;
+  background: #09141b;
+}
+
+.side-panels {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem 0.75rem;
+  background: rgba(15, 28, 36, 0.95);
+  border-top: 1px solid var(--border);
+}
+
+.side-panels .panel {
+  box-shadow: none;
+  padding: 0.7rem;
+}
+
+.legend-row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.legend-row img {
+  height: 120px;
+  width: 20px;
+  background: #000;
+}
+
+.popup {
+  position: absolute;
+  background: #12313f;
+  color: var(--ink);
+  padding: 0.5rem 0.65rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  min-width: 160px;
+  max-width: 320px;
+  font-size: 0.85rem;
+  z-index: 10;
+  box-shadow: var(--shadow);
+}
+
+.anim-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.hidden {
+  display: none !important;
+}
